@@ -9,20 +9,20 @@
       <form>
         <input type='text' id='url'
           placeholder='https://www.youtube.com/watch?v=UF8uR6Z6KLc'
-          style='width: 500px; margin-bottom: 10px;'/>
-        <input type='submit' id='submit'/>
+          style='width: 350px; margin-bottom: 10px;'/>
+        <input type='submit' id='submit'/> Just paste a URL on the screen
       </form>
     </div>
     <div id="player"></div>
 
     <script>
-      var tag = document.createElement('script');
+      const tag = document.createElement('script');
 
       tag.src = "https://www.youtube.com/iframe_api";
-      var firstScriptTag = document.getElementsByTagName('script')[0];
+      const firstScriptTag = document.getElementsByTagName('script')[0];
       firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-      var player;
+      let player;
       function onYouTubeIframeAPIReady() {
         player = new YT.Player('player', {
           height: '390',
@@ -34,29 +34,41 @@
         });
       }
 
-      var urlField = document.getElementById('url')
-      var submitButton = document.getElementById('submit')
-      var html = document.getElementsByTagName('html')[0]
+      const urlField = document.getElementById('url')
+      const submitButton = document.getElementById('submit')
+      const html = document.getElementsByTagName('html')[0]
 
-      urlField.addEventListener('keyup', function(e) {
+      urlField.addEventListener('keyup', e => {
         if (e.keyCode === 13) {
           e.preventDefault()
           submitButton.click()
         }
       })
-      submitButton.addEventListener('click', function(e) {
+      submitButton.addEventListener('click', e => {
         e.preventDefault()
         player.loadVideoById(getVideoId())
         player.playVideo()
       })
-      html.addEventListener('keyup', function(e) {
+      html.addEventListener('keyup', e => {
         if (e.keyCode === 32) {
           e.preventDefault()
           togglePlay()
         }
       })
-      html.addEventListener('click', function(e) {
+      html.addEventListener('click', e => {
         togglePlay()
+      })
+      html.addEventListener('paste', e => {
+        const paste = (e.clipboardData || window.clipboardData).getData('text')
+        if (paste.indexOf('youtube') === -1) return
+        if (paste.indexOf('v=') === -1) return
+        try {
+          const u = new URL(paste)
+          urlField.value = u.href
+          submitButton.click()
+        } catch {
+          // ignore
+        }
       })
 
       function getVideoId() {
@@ -67,7 +79,7 @@
 
       function getVParam(url) {
         try {
-          var u = new URL(url)
+          const u = new URL(url)
           return u.searchParams.get('v')
         } catch {
           return null
