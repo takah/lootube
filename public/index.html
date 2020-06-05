@@ -10,7 +10,7 @@
         <input type='text' id='url'
           placeholder='https://www.youtube.com/watch?v=UF8uR6Z6KLc'
           style='width: 350px; margin-bottom: 10px;'/>
-        <input type='submit' id='submit'/> Just paste a URL on the screen
+        <input type='submit' id='submit'/> &nbsp;&nbsp; Paste a URL on the screen
       </form>
     </div>
     <div id="player"></div>
@@ -44,20 +44,32 @@
           submitButton.click()
         }
       })
+
       submitButton.addEventListener('click', e => {
         e.preventDefault()
         player.loadVideoById(getVideoId())
         player.playVideo()
       })
+
       html.addEventListener('keyup', e => {
-        if (e.keyCode === 32) {
-          e.preventDefault()
-          togglePlay()
+        e.preventDefault()
+        switch (e.code) {
+          case 'Space':
+            togglePlay()
+            break
+          case 'ArrowLeft':
+            player.seekTo(player.getCurrentTime() - 5)
+            break
+          case 'ArrowRight':
+          player.seekTo(player.getCurrentTime() + 5)
+            break
         }
       })
+
       html.addEventListener('click', e => {
         togglePlay()
       })
+
       html.addEventListener('paste', e => {
         const paste = (e.clipboardData || window.clipboardData).getData('text')
         if (paste.indexOf('youtube') === -1) return
