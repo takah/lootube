@@ -36,16 +36,27 @@
 
       var urlField = document.getElementById('url')
       var submitButton = document.getElementById('submit')
-      urlField.addEventListener('keyup', function(event) {
-        if (event.keyCode === 13) {
-          event.preventDefault()
+      var html = document.getElementsByTagName('html')[0]
+
+      urlField.addEventListener('keyup', function(e) {
+        if (e.keyCode === 13) {
+          e.preventDefault()
           submitButton.click()
         }
       })
-      submitButton.addEventListener('click', function(event) {
-        event.preventDefault()
+      submitButton.addEventListener('click', function(e) {
+        e.preventDefault()
         player.loadVideoById(getVideoId())
         player.playVideo()
+      })
+      html.addEventListener('keyup', function(e) {
+        if (e.keyCode === 32) {
+          e.preventDefault()
+          togglePlay()
+        }
+      })
+      html.addEventListener('click', function(e) {
+        togglePlay()
       })
 
       function getVideoId() {
@@ -66,6 +77,19 @@
       function onPlayerStateChange(event) {
         if (event.data == YT.PlayerState.ENDED) {
           player.playVideo()
+        }
+      }
+      
+      function togglePlay() {
+        switch (player.getPlayerState()) {
+          case YT.PlayerState.PLAYING:
+            player.pauseVideo()
+            break
+          case YT.PlayerState.PAUSED:
+          case YT.PlayerState.ENDED:
+          case YT.PlayerState.CUED:
+            player.playVideo()
+            break
         }
       }
     </script>
