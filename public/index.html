@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>LooTube: Loop YouTube Videos</title>
+  </head>
+  <body>
+    <h1>LooTube: Loop YouTube Videos</h1>
+    <div>
+      <form>
+        <input type='text' id='url'
+          placeholder='https://www.youtube.com/watch?v=UF8uR6Z6KLc'
+          style='width: 500px; margin-bottom: 10px;'/>
+        <input type='submit' id='submit'/>
+      </form>
+    </div>
+    <div id="player"></div>
+
+    <script>
+      var tag = document.createElement('script');
+
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      var player;
+      function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+          height: '390',
+          width: '640',
+          videoId: getVideoId(),
+          events: {
+            'onStateChange': onPlayerStateChange
+          }
+        });
+      }
+
+      var urlField = document.getElementById('url')
+      var submitButton = document.getElementById('submit')
+      urlField.addEventListener('keyup', function(event) {
+        if (event.keyCode === 13) {
+          event.preventDefault()
+          submitButton.click()
+        }
+      })
+      submitButton.addEventListener('click', function(event) {
+        event.preventDefault()
+        player.loadVideoById(getVideoId())
+        player.playVideo()
+      })
+
+      function getVideoId() {
+        return getVParam(urlField.value)
+        || getVParam(window.location.href)
+        || 'UF8uR6Z6KLc'
+      }
+
+      function getVParam(url) {
+        try {
+          var u = new URL(url)
+          return u.searchParams.get('v')
+        } catch {
+          return null
+        }
+      }
+
+      function onPlayerStateChange(event) {
+        if (event.data == YT.PlayerState.ENDED) {
+          player.playVideo()
+        }
+      }
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-analytics.js"></script>
+    <script>
+      var firebaseConfig = {
+        apiKey: "AIzaSyAR1Mpmiy7mLUgHNQL2YhDZnGX7h_k3Vb4",
+        authDomain: "lootube-f26d2.firebaseapp.com",
+        databaseURL: "https://lootube-f26d2.firebaseio.com",
+        projectId: "lootube-f26d2",
+        storageBucket: "lootube-f26d2.appspot.com",
+        messagingSenderId: "113683620735",
+        appId: "1:113683620735:web:f310af7de1e4af451fb04a",
+        measurementId: "G-LGGZS2GN79"
+      };
+      firebase.initializeApp(firebaseConfig);
+      firebase.analytics();
+    </script>
+  </body>
+</html>
