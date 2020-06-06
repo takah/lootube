@@ -29,7 +29,8 @@
           height: 720,
           videoId: getVideoId(),
           events: {
-            'onStateChange': onPlayerStateChange
+            onStateChange: onPlayerStateChange,
+            onApiChange: onApiChange,
           }
         });
       }
@@ -102,6 +103,10 @@
         if (event.data == YT.PlayerState.ENDED) {
           player.playVideo()
         }
+      }
+
+      function onApiChange(event) {
+        player.setOption('captions', { fontSize: 3 })
       }
       
       function togglePlay() {
